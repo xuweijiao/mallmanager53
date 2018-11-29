@@ -26,8 +26,8 @@ export default {
   },
   methods: {
     //登录请求
-    handleLogin() {
-      this.$http.post('login', this.formdata).then(res => {
+    async handleLogin() {
+      const res = await this.$http.post('login', this.formdata)
         console.log(res)
         const {
           data,
@@ -44,7 +44,25 @@ export default {
           //1.提示信息 
             this.$message.warning(msg)
           }
-      })
+     
+      // this.$http.post('login', this.formdata).then(res => {
+      //   console.log(res)
+      //   const {
+      //     data,
+      //     meta: {msg,status}
+      //   } = res.data
+      //     if (status === 200) {
+      //     // 登录成功
+      //     // 1.跳转到首页home
+      //     this.$router.push({name:'home'})
+      //     // 2.提示成功  
+      //       this.$message.success(msg)
+      //     } else {
+      //     // 登录失败
+      //     //1.提示信息 
+      //       this.$message.warning(msg)
+      //     }
+      // })
     }
   }
 };
