@@ -95,7 +95,19 @@
 </template>
 
 <script>
-export default {};
+export default {
+    // new Vue之前自动触发
+   beforeCreate () {
+    // 获取token
+    const token = localStorage.getItem('token')
+    if (!token) {
+        // token 没有→登录
+        this.$router.push({name:'login'})
+    } 
+    // if token 有→继续渲染组件
+
+   }
+}
 </script>
 
 <style>
