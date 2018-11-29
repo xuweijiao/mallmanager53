@@ -3,13 +3,17 @@
 import Vue from 'vue'
 import App from './App'
 import ElementUI from 'element-ui'
+import MyHttpServer from '@/plugins/http.js'
+
 // 不要忘记引入样式文件
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/assets/css/reset.css'
+
 import router from './router'
 
 // 使用Vue插件
 Vue.use(ElementUI)
+Vue.use(MyHttpServer)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
