@@ -17,26 +17,31 @@
     </el-row>
     <!-- 3.表格 -->
     <el-table :data="userlist" style="width: 100%">
-      <el-table-column type="index" label="#" width="60"></el-table-column>
-      <el-table-column prop="username" label="姓名" width="80"></el-table-column>
-      <el-table-column prop="email" label="邮箱" width="180"></el-table-column>
-      <el-table-column prop="mobile" label="电话" width="180"></el-table-column>
+      <el-table-column type="index" label="#" ></el-table-column>
+      <el-table-column prop="username" label="姓名" ></el-table-column>
+      <el-table-column prop="email" label="邮箱" ></el-table-column>
+      <el-table-column prop="mobile" label="电话" ></el-table-column>
 
       <!-- 过滤器处理时间格式 -->
       <el-table-column label="创建时间" width="140">
-        <template slot-scope="userlist">
-            {{userlist.row.create_time | fmtdate}}
+        <template slot-scope="userlist">{{userlist.row.create_time | fmtdate}}</template>
+      </el-table-column>
+
+      <!-- 状态开关 -->
+      <el-table-column prop="mg_state" label="用户状态">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </template>
       </el-table-column>
 
-      <el-table-column prop="mg_state" label="用户状态" width="180">
-        <template slot-scope="userlist">
-          <el-switch v-model="mg_state" active-color="#13ce66" inactive-color="#ff4949">
-          </el-switch>
+      <!-- 操作按钮 -->
+      <el-table-column prop="address" label="操作">
+        <template slot-scope="scope">
+          <el-button size="mini" plain type="primary" icon="el-icon-edit" circle></el-button>
+          <el-button size="mini" plain type="danger" icon="el-icon-delete" circle></el-button>
+          <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
         </template>
       </el-table-column>
-
-      <el-table-column prop="address" label="操作"></el-table-column>
     </el-table>
     <!-- 4.分页 -->
   </el-card>
@@ -47,7 +52,6 @@ export default {
   name: "",
   data() {
     return {
-      mg_state: true,  
       query: "",
       // 分页相关数据
       pagenum: 1,
