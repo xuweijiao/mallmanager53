@@ -16,47 +16,27 @@
       </el-col>
     </el-row>
     <!-- 3.表格 -->
-     <el-table
-      :data="userlist"
-      style="width: 100%">
-      <el-table-column
-        type="index"
-        label="#"
-        width="60">
-      </el-table-column>
-      <el-table-column
-        prop="username"
-        label="姓名"
-        width="80">
-      </el-table-column>
-      <el-table-column
-        prop="email"
-        label="邮箱"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="mobile"
-        label="电话"
-        width="180">
-      </el-table-column>
+    <el-table :data="userlist" style="width: 100%">
+      <el-table-column type="index" label="#" width="60"></el-table-column>
+      <el-table-column prop="username" label="姓名" width="80"></el-table-column>
+      <el-table-column prop="email" label="邮箱" width="180"></el-table-column>
+      <el-table-column prop="mobile" label="电话" width="180"></el-table-column>
 
       <!-- 过滤器处理时间格式 -->
-      <el-table-column
-        label="创建时间">
+      <el-table-column label="创建时间" width="140">
         <template slot-scope="userlist">
-        {{userlist.row.create_time | fmtdate}}
+            {{userlist.row.create_time | fmtdate}}
         </template>
       </el-table-column>
 
-      <el-table-column
-        prop="mg_state"
-        label="用户状态"
-        width="180">
+      <el-table-column prop="mg_state" label="用户状态" width="180">
+        <template slot-scope="userlist">
+          <el-switch v-model="mg_state" active-color="#13ce66" inactive-color="#ff4949">
+          </el-switch>
+        </template>
       </el-table-column>
-      <el-table-column
-        prop="address"
-        label="操作">
-      </el-table-column>
+
+      <el-table-column prop="address" label="操作"></el-table-column>
     </el-table>
     <!-- 4.分页 -->
   </el-card>
@@ -64,43 +44,51 @@
 
 <script>
 export default {
-  name: '',
+  name: "",
   data() {
     return {
-        query: '',
-        // 分页相关数据
-        pagenum: 1,
-        pagesize: 2,
-        total: -1,
-        // 表格绑定的数据
-        userlist: []
-    }
+      mg_state: true,  
+      query: "",
+      // 分页相关数据
+      pagenum: 1,
+      pagesize: 2,
+      total: -1,
+      // 表格绑定的数据
+      userlist: []
+    };
   },
-  created () {
-      this.getUserList()
+  created() {
+    this.getUserList();
   },
   methods: {
     //   获取用户列表的请求
     async getUserList() {
-        const AUTH_TOKEN = localStorage.getItem('token')
-        this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
-        const res = await this.$http.get(`users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
-        console.log(res)
-        const {meta:{status,msg},data:{users,total}} = res.data
-        if (status === 200) {
-            // 1.给表格数据赋值
-            this.userlist = users
-            // 2.给total赋值
-            this.total = total
-            // 3.提示获取数据成功
-            this.$message.success(msg)
-        } else {
-            // 4.提示获取数据失败
-            this.$message.warning(msg)
-        }
+      const AUTH_TOKEN = localStorage.getItem("token");
+      this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN;
+      const res = await this.$http.get(
+        `users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${
+          this.pagesize
+        }`
+      );
+      console.log(res);
+      const {
+        meta: { status, msg },
+        data: { users, total }
+      } = res.data;
+      if (status === 200) {
+        // 1.给表格数据赋值
+        this.userlist = users;
+        // 2.给total赋值
+        this.total = total;
+        // 3.提示获取数据成功
+        this.$message.success(msg);
+      } else {
+        // 4.提示获取数据失败
+        this.$message.warning(msg);
+      }
     }
   }
-}
+};
 </script>
 
 <style>
@@ -108,9 +96,9 @@ export default {
   height: 100%;
 }
 .inputSearch {
-    width: 400px;
+  width: 400px;
 }
 .searchRow {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 </style>
