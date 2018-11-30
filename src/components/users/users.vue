@@ -39,11 +39,15 @@
         label="电话"
         width="180">
       </el-table-column>
+
+      <!-- 过滤器处理时间格式 -->
       <el-table-column
-        prop="create_time"
-        label="创建时间"
-        width="180">
+        label="创建时间">
+        <template slot-scope="userlist">
+        {{userlist.row.create_time | fmtdate}}
+        </template>
       </el-table-column>
+
       <el-table-column
         prop="mg_state"
         label="用户状态"
