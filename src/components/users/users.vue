@@ -64,6 +64,8 @@ export default {
   data() {
     return {
         query: '',
+        pagenum: 1,
+        pagesize: 2,
         tableData: [{
             date: '2016-05-02',
             name: '王小虎',
@@ -74,6 +76,18 @@ export default {
             name: '王小虎',
             address: '上海市普陀区金沙江路 1517 弄'
         }]
+    }
+  },
+  created () {
+      this.getUserList()
+  },
+  methods: {
+    //   获取用户列表的请求
+    async getUserList() {
+        const AUTH_TOKEN = localStorage.getItem('token')
+        this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
+        const res = await this.$http.get(`users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
+        console.log(res)
     }
   }
 }
