@@ -69,22 +69,22 @@
     <!-- 添加用户 -->
     <el-dialog title="添加用户" :visible.sync="dialogFormVisibleAdd">
       <el-form :model="form">
-        <el-form-item label="用户名" label-width="100px">
+        <el-form-item class="dia-form" label="用户名" label-width="100px">
           <el-input v-model="form.username" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" label-width="100px">
+        <el-form-item class="dia-form" label="密码" label-width="100px">
           <el-input v-model="form.password" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱" label-width="100px">
+        <el-form-item class="dia-form" label="邮箱" label-width="100px">
           <el-input v-model="form.email" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="电话" label-width="100px">
+        <el-form-item class="dia-form" label="电话" label-width="100px">
           <el-input v-model="form.mobile" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisibleAdd = false">确 定</el-button>
+        <el-button type="primary" @click="addUser()">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -106,10 +106,10 @@ export default {
       dialogFormVisibleAdd: false,
       // 添加用户的表单数据
       form: {
-          username: '',
-          password: '',
-          email: '',
-          mobile: ''
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
       }
     }
   },
@@ -117,7 +117,36 @@ export default {
     this.getUserList();
   },
   methods: {
-    //   点击添加用户按钮出现添加用户对话框
+    //   添加用户-发送请求
+    async addUser() {
+        this.dialogFormVisibleAdd = false
+        const res = await this.$http.post(`users`,this.form)
+        console.log(res)
+        const {meta:{status,msg},data} = res.data
+        if (status === 201) {
+            // 1、提示添加成功
+            this.$message.success(msg)
+            // 2、关闭对话框，写在外面也可以
+            // 3、更新视图
+            this.getUserList()
+            // 4、清空文本框,赋值空对象和遍历都可以
+            // [1]
+            // this.form = {}
+            // [2]
+            // for (const key in this.form) {
+            //     if (this.form.hasOwnProperty(key)) {
+            //         this.form[key] = ""
+            //     }
+            // }
+            // [3]
+             for (const key in this.form) {
+                this.form[key] = ""
+            }
+        } else {
+            this.$message.warning(msg)
+        }
+    },
+    //   点击添加用户按钮显示添加用户对话框
     showAddUserDia() {
         this.dialogFormVisibleAdd = true
     },
@@ -162,7 +191,7 @@ export default {
         // 2.给total赋值
         this.total = total;
         // 3.提示获取数据成功
-        this.$message.success(msg);
+        // this.$message.success(msg);
       } else {
         // 4.提示获取数据失败
         this.$message.warning(msg);
@@ -181,5 +210,8 @@ export default {
 }
 .searchRow {
   margin-top: 30px;
+}
+.dia-form {
+    margin-right: 50px;
 }
 </style>
