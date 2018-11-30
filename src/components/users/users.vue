@@ -44,6 +44,12 @@
       </el-table-column>
     </el-table>
     <!-- 4.分页 -->
+    <!-- 
+        数据24条
+        pagenum=3
+        pagesize=2
+        1,2/3,4/5,6
+     -->
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -76,10 +82,15 @@ export default {
   methods: {
     //   分页相关的方法
      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+        console.log(`每页 ${val} 条`)
+        this.pagesize = val
+        this.pagenum = 1
+        this.getUserList()
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+          this.pagenum = val
+          this.getUserList()
+        console.log(`当前页: ${val}`)
       },
     //   获取用户列表的请求
     async getUserList() {
