@@ -17,7 +17,7 @@
     </el-row>
     <!-- 3.表格 -->
      <el-table
-      :data="tableData"
+      :data="userlist"
       style="width: 100%">
       <el-table-column
         type="index"
@@ -25,7 +25,7 @@
         width="60">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="username"
         label="姓名"
         width="80">
       </el-table-column>
@@ -35,17 +35,17 @@
         width="180">
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="mobile"
         label="电话"
         width="180">
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="create_time"
         label="创建时间"
         width="180">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="mg_state"
         label="用户状态"
         width="180">
       </el-table-column>
@@ -64,18 +64,12 @@ export default {
   data() {
     return {
         query: '',
+        // 分页相关数据
         pagenum: 1,
         pagesize: 2,
-        tableData: [{
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-        }, 
-        {
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-        }]
+        total: -1,
+        // 表格绑定的数据
+        userlist: []
     }
   },
   created () {
@@ -88,6 +82,18 @@ export default {
         this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
         const res = await this.$http.get(`users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
         console.log(res)
+        const {meta:{status,msg},data:{users,total}} = res.data
+        if (status === 200) {
+            // 1.给表格数据赋值
+            this.userlist = users
+            // 2.给total赋值
+            this.total = total
+            // 3.提示获取数据成功
+            this.$message.success(msg)
+        } else {
+            // 4.提示获取数据失败
+            this.$message.warning(msg)
+        }
     }
   }
 }
