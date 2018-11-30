@@ -9,20 +9,24 @@
     <!-- 2.搜索 -->
     <el-row class="searchRow">
       <el-col>
-        <el-input @clear="loadUserList()"
-        placeholder="请输入内容" clearable v-model="query" class="inputSearch">
-          <el-button @click="searchUser()"
-          slot="append" icon="el-icon-search"></el-button>
+        <el-input
+          @clear="loadUserList()"
+          placeholder="请输入内容"
+          clearable
+          v-model="query"
+          class="inputSearch"
+        >
+          <el-button @click="searchUser()" slot="append" icon="el-icon-search"></el-button>
         </el-input>
-        <el-button type="success">添加用户</el-button>
+        <el-button type="success" @click="showAddUserDia()">添加用户</el-button>
       </el-col>
     </el-row>
     <!-- 3.表格 -->
     <el-table :data="userlist" style="width: 100%">
-      <el-table-column type="index" label="#" ></el-table-column>
-      <el-table-column prop="username" label="姓名" ></el-table-column>
-      <el-table-column prop="email" label="邮箱" ></el-table-column>
-      <el-table-column prop="mobile" label="电话" ></el-table-column>
+      <el-table-column type="index" label="#"></el-table-column>
+      <el-table-column prop="username" label="姓名"></el-table-column>
+      <el-table-column prop="email" label="邮箱"></el-table-column>
+      <el-table-column prop="mobile" label="电话"></el-table-column>
 
       <!-- 过滤器处理时间格式 -->
       <el-table-column label="创建时间" width="140">
@@ -51,7 +55,7 @@
         pagenum=3
         pagesize=2
         1,2/3,4/5,6
-     -->
+    -->
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -59,8 +63,30 @@
       :page-sizes="[2, 4, 6, 8]"
       :page-size="2"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="total">
-    </el-pagination>
+      :total="total"
+    ></el-pagination>
+    <!-- 弹出层-对话框  -->
+    <!-- 添加用户 -->
+    <el-dialog title="添加用户" :visible.sync="dialogFormVisibleAdd">
+      <el-form :model="form">
+        <el-form-item label="用户名" label-width="100px">
+          <el-input v-model="form.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" label-width="100px">
+          <el-input v-model="form.password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" label-width="100px">
+          <el-input v-model="form.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" label-width="100px">
+          <el-input v-model="form.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisibleAdd = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -75,34 +101,47 @@ export default {
       pagesize: 2,
       total: -1,
       // 表格绑定的数据
-      userlist: []
-    };
+      userlist: [],
+      //   添加对话框的属性
+      dialogFormVisibleAdd: false,
+      // 添加用户的表单数据
+      form: {
+          username: '',
+          password: '',
+          email: '',
+          mobile: ''
+      }
+    }
   },
   created() {
     this.getUserList();
   },
   methods: {
+    //   点击添加用户按钮出现添加用户对话框
+    showAddUserDia() {
+        this.dialogFormVisibleAdd = true
+    },
     //   搜索用户功能
     searchUser() {
-        // 按照input输入框绑定的值query发送请求
-        this.getUserList()
+      // 按照input输入框绑定的值query发送请求
+      this.getUserList();
     },
     // 清空搜索框重新获取全部数据
     loadUserList() {
-        this.getUserList()
+      this.getUserList();
     },
     //   分页相关的方法
-     handleSizeChange(val) {
-        console.log(`每页 ${val} 条`)
-        this.pagesize = val
-        this.pagenum = 1
-        this.getUserList()
-      },
-      handleCurrentChange(val) {
-          this.pagenum = val
-          this.getUserList()
-        console.log(`当前页: ${val}`)
-      },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.pagesize = val;
+      this.pagenum = 1;
+      this.getUserList();
+    },
+    handleCurrentChange(val) {
+      this.pagenum = val;
+      this.getUserList();
+      console.log(`当前页: ${val}`);
+    },
     //   获取用户列表的请求
     async getUserList() {
       const AUTH_TOKEN = localStorage.getItem("token");
