@@ -115,7 +115,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisibleEdit = false">确 定</el-button>
+        <el-button type="primary" @click="editUser()">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -142,7 +142,8 @@ export default {
         password: '',
         email: '',
         mobile: ''
-      }
+      },
+      // currUserId: -1
     }
   },
   created() {
@@ -150,9 +151,18 @@ export default {
   },
   
   methods: {
+    // 编辑用户--发送请求
+    async editUser() {
+      const res = await this.$http.put(`users/${this.form.id}`,this.form)
+      console.log(res)
+      // 关闭对话框
+      this.dialogFormVisibleEdit = false
+      // 更新视图
+      this.getUserList()
+    },
     // 编辑用户---显示消息盒子
     showEditUserDia(user) {
-      console.log(user)
+      // console.log(user)
       this.form = user
       // 获取用户数据
       this.dialogFormVisibleEdit = true
@@ -219,7 +229,8 @@ export default {
     },
     //   点击添加用户按钮显示添加用户对话框
     showAddUserDia() {
-        this.dialogFormVisibleAdd = true
+      this.form = {}
+      this.dialogFormVisibleAdd = true
     },
     //   搜索用户功能
     searchUser() {
@@ -251,7 +262,7 @@ export default {
           this.pagesize
         }`
       );
-      console.log(res);
+      // console.log(res);
       const {
         meta: { status, msg },
         data: { users, total }
