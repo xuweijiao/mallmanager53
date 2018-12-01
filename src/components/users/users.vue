@@ -139,9 +139,11 @@
           {{"当前用户的用户名"}}
         </el-form-item>
         <el-form-item label="角色" label-width="100px">
+          {{currRoleId}}
           <el-select v-model="currRoleId">
             <el-option label="请选择" :value="-1"></el-option>
-            <!-- <el-option label="区域二" value="beijing"></el-option> -->
+            <el-option :label="item" :value="i" v-for="(item,i) in 5" :key="i">
+            </el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -176,7 +178,7 @@ export default {
         email: "",
         mobile: ""
       },
-      currRoleId: -1
+      currRoleId: 0
     };
   },
   created() {
