@@ -136,13 +136,13 @@
     <el-dialog title="分配角色" :visible.sync="dialogFormVisibleRol">
       <el-form :model="form">
         <el-form-item label="用户名" label-width="100px">
-          {{"当前用户的用户名"}}
+          {{currUserName}}
         </el-form-item>
         <el-form-item label="角色" label-width="100px">
           {{currRoleId}}
           <el-select v-model="currRoleId">
             <el-option label="请选择" :value="-1"></el-option>
-            <el-option :label="item" :value="i" v-for="(item,i) in 5" :key="i">
+            <el-option :label="item.roleName" :value="item.id" v-for="(item,i) in roles" :key="i">
             </el-option>
           </el-select>
         </el-form-item>
@@ -178,7 +178,9 @@ export default {
         email: "",
         mobile: ""
       },
-      currRoleId: 0
+      currRoleId: 0,
+      currUserName: '',
+      roles: []
     };
   },
   created() {
@@ -187,7 +189,17 @@ export default {
 
   methods: {
     // 分配用户角色--打开对话框
-    showSetUserRoleDia() {
+    async showSetUserRoleDia(user) {
+      // 获取当前用户的用户名
+      this.currUserName = user.username
+      // 获取所有的角色
+      const res1 = await this.$http.get(`roles`)
+      console.log(res1)
+      this.roles = res1.data.data
+      //获取当前用户的角色id---rid
+      const res = await this.$http.get(`users/${user.id}`)
+      // console.log(res)
+      this.currRoleId = res.data.data.rid
       this.dialogFormVisibleRol = true
     },
     // 修改用户状态
