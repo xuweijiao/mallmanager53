@@ -36,7 +36,8 @@
       <!-- 状态开关 -->
       <el-table-column prop="mg_state" label="用户状态">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <el-switch @change="changeMgState(scope.row)"
+          v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </template>
       </el-table-column>
 
@@ -114,9 +115,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+        <el-button @click="editUserCancel()">取 消</el-button>
         <el-button type="primary" @click="editUser()">确 定</el-button>
-      </div>
+      </div>    
     </el-dialog>
   </el-card>
 </template>
@@ -151,7 +152,19 @@ export default {
   },
   
   methods: {
-    // 编辑用户--发送请求
+    // 修改用户状态
+    async changeMgState(user) {
+      const res = await this.$http.put(`users/${user.id}/state/${user.mg_state}`)
+      console.log(res)
+    },
+    // 编辑用户--点击取消--不改变原本的数据
+    editUserCancel() {
+      // 点击取消显示原本的数据
+     this.form = this.form
+      // 关闭对话框
+      this.dialogFormVisibleEdit = false
+    },
+    // 编辑用户--点击确定--发送请求
     async editUser() {
       const res = await this.$http.put(`users/${this.form.id}`,this.form)
       console.log(res)
@@ -198,7 +211,7 @@ export default {
           });          
         });
     },
-    //   添加用户-发送请求
+    //   添加用户-点击确定--发送请求
     async addUser() {
         this.dialogFormVisibleAdd = false
         const res = await this.$http.post(`users`,this.form)
@@ -229,6 +242,7 @@ export default {
     },
     //   点击添加用户按钮显示添加用户对话框
     showAddUserDia() {
+      // 添加之前先清空表单中的数据
       this.form = {}
       this.dialogFormVisibleAdd = true
     },
