@@ -44,7 +44,13 @@
       <el-table-column prop="address" label="操作">
         <template slot-scope="scope">
           <el-button size="mini" plain type="primary" icon="el-icon-edit" circle></el-button>
-          <el-button size="mini" plain type="danger" icon="el-icon-delete" circle></el-button>
+          <el-button 
+          size="mini" 
+          plain 
+          type="danger" 
+          icon="el-icon-delete" 
+          circle
+          @click="showDeleUserMsgBox()"></el-button>
           <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
         </template>
       </el-table-column>
@@ -117,6 +123,26 @@ export default {
     this.getUserList();
   },
   methods: {
+    // 删除用户--弹出框（打开消息盒子）
+    showDeleUserMsgBox() {
+       this.$confirm('删除用户, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    },
     //   添加用户-发送请求
     async addUser() {
         this.dialogFormVisibleAdd = false
@@ -131,7 +157,7 @@ export default {
             this.getUserList()
             // 4、清空文本框,赋值空对象和遍历都可以
             // [1]
-            // this.form = {}
+            this.form = {}
             // [2]
             // for (const key in this.form) {
             //     if (this.form.hasOwnProperty(key)) {
@@ -139,9 +165,9 @@ export default {
             //     }
             // }
             // [3]
-             for (const key in this.form) {
-                this.form[key] = ""
-            }
+            //  for (const key in this.form) {
+            //     this.form[key] = ""
+            // }
         } else {
             this.$message.warning(msg)
         }
