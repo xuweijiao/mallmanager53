@@ -50,7 +50,7 @@
           type="danger" 
           icon="el-icon-delete" 
           circle
-          @click="showDeleUserMsgBox()"></el-button>
+          @click="showDeleUserMsgBox(scope.row.id)"></el-button>
           <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
         </template>
       </el-table-column>
@@ -124,17 +124,28 @@ export default {
   },
   methods: {
     // 删除用户--弹出框（打开消息盒子）
-    showDeleUserMsgBox() {
+    showDeleUserMsgBox(userId) {
        this.$confirm('删除用户, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
-        .then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+        .then(async () => {
+          // 发送删除请求---id指的是用户id
+          // 1.data中找id
+          // 2.调用方法时把userId以参数的形式传递过来
+          const res = await this.$http.delete(`users/${userId}`)
+          console.log(res)
+          if (res.status === 200) {
+            this.pagenum = 1
+            // 更新视图
+            this.getUserList()
+            // 提示删除成功
+            this.$message({
+              type: 'success',
+              message: res.data.meta.msg
+            });
+          }
         })
         .catch(() => {
           this.$message({
