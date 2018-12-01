@@ -36,29 +36,42 @@
       <!-- 状态开关 -->
       <el-table-column prop="mg_state" label="用户状态">
         <template slot-scope="scope">
-          <el-switch @change="changeMgState(scope.row)"
-          v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <el-switch
+            @change="changeMgState(scope.row)"
+            v-model="scope.row.mg_state"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+          ></el-switch>
         </template>
       </el-table-column>
 
       <!-- 操作按钮 -->
       <el-table-column prop="address" label="操作">
         <template slot-scope="scope">
-          <el-button 
-          size="mini" 
-          plain type="primary" 
-          icon="el-icon-edit" 
-          circle
-          @click="showEditUserDia(scope.row)"
+          <el-button
+            size="mini"
+            plain
+            type="primary"
+            icon="el-icon-edit"
+            circle
+            @click="showEditUserDia(scope.row)"
           ></el-button>
-          <el-button 
-          size="mini" 
-          plain 
-          type="danger" 
-          icon="el-icon-delete" 
-          circle
-          @click="showDeleUserMsgBox(scope.row.id)"></el-button>
-          <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
+          <el-button
+            size="mini"
+            plain
+            type="danger"
+            icon="el-icon-delete"
+            circle
+            @click="showDeleUserMsgBox(scope.row.id)"
+          ></el-button>
+          <el-button
+            @click="showSetUserRoleDia(scope.row)"
+            size="mini"
+            plain
+            type="success"
+            icon="el-icon-check"
+            circle
+          ></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -117,7 +130,25 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="editUserCancel()">取 消</el-button>
         <el-button type="primary" @click="editUser()">确 定</el-button>
-      </div>    
+      </div>
+    </el-dialog>
+    <!-- 分配角色的对话框点击√ -->
+    <el-dialog title="分配角色" :visible.sync="dialogFormVisibleRol">
+      <el-form :model="form">
+        <el-form-item label="用户名" label-width="100px">
+          {{"当前用户的用户名"}}
+        </el-form-item>
+        <el-form-item label="角色" label-width="100px">
+          <el-select v-model="currRoleId">
+            <el-option label="请选择" :value="-1"></el-option>
+            <!-- <el-option label="区域二" value="beijing"></el-option> -->
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
     </el-dialog>
   </el-card>
 </template>
@@ -137,114 +168,124 @@ export default {
       //   添加对话框的属性
       dialogFormVisibleAdd: false,
       dialogFormVisibleEdit: false,
+      dialogFormVisibleRol: false,
       // 添加用户的表单数据
       form: {
-        username: '',
-        password: '',
-        email: '',
-        mobile: ''
+        username: "",
+        password: "",
+        email: "",
+        mobile: ""
       },
-      // currUserId: -1
-    }
+      currRoleId: -1
+    };
   },
   created() {
     this.getUserList();
   },
-  
+
   methods: {
+    // 分配用户角色--打开对话框
+    showSetUserRoleDia() {
+      this.dialogFormVisibleRol = true
+    },
     // 修改用户状态
     async changeMgState(user) {
-      const res = await this.$http.put(`users/${user.id}/state/${user.mg_state}`)
-      console.log(res)
+      const res = await this.$http.put(
+        `users/${user.id}/state/${user.mg_state}`
+      );
+      console.log(res);
     },
     // 编辑用户--点击取消--不改变原本的数据
     editUserCancel() {
       // 点击取消显示原本的数据
-     this.form = this.form
+    
       // 关闭对话框
-      this.dialogFormVisibleEdit = false
+      this.dialogFormVisibleEdit = false;
     },
     // 编辑用户--点击确定--发送请求
     async editUser() {
-      const res = await this.$http.put(`users/${this.form.id}`,this.form)
-      console.log(res)
+      const res = await this.$http.put(`users/${this.form.id}`, this.form);
+      console.log(res);
       // 关闭对话框
-      this.dialogFormVisibleEdit = false
+      this.dialogFormVisibleEdit = false;
       // 更新视图
-      this.getUserList()
+      this.getUserList();
     },
     // 编辑用户---显示消息盒子
     showEditUserDia(user) {
       // console.log(user)
-      this.form = user
+      this.form = user;
       // 获取用户数据
-      this.dialogFormVisibleEdit = true
+      this.dialogFormVisibleEdit = true;
     },
     // 删除用户--弹出框（打开消息盒子）
     showDeleUserMsgBox(userId) {
-       this.$confirm('删除用户, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
+      this.$confirm("删除用户, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
         .then(async () => {
           // 发送删除请求---id指的是用户id
           // 1.data中找id
           // 2.调用方法时把userId以参数的形式传递过来
-          const res = await this.$http.delete(`users/${userId}`)
-          console.log(res)
+          const res = await this.$http.delete(`users/${userId}`);
+          console.log(res);
           if (res.status === 200) {
-            this.pagenum = 1
+            this.pagenum = 1;
             // 更新视图
-            this.getUserList()
+            this.getUserList();
             // 提示删除成功
             this.$message({
-              type: 'success',
+              type: "success",
               message: res.data.meta.msg
             });
           }
         })
         .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+            type: "info",
+            message: "已取消删除"
+          });
         });
     },
     //   添加用户-点击确定--发送请求
     async addUser() {
-        this.dialogFormVisibleAdd = false
-        const res = await this.$http.post(`users`,this.form)
-        console.log(res)
-        const {meta:{status,msg},data} = res.data
-        if (status === 201) {
-            // 1、提示添加成功
-            this.$message.success(msg)
-            // 2、关闭对话框，写在外面也可以
-            // 3、更新视图
-            this.getUserList()
-            // 4、清空文本框,赋值空对象和遍历都可以
-            // [1]
-            this.form = {}
-            // [2]
-            // for (const key in this.form) {
-            //     if (this.form.hasOwnProperty(key)) {
-            //         this.form[key] = ""
-            //     }
-            // }
-            // [3]
-            //  for (const key in this.form) {
-            //     this.form[key] = ""
-            // }
-        } else {
-            this.$message.warning(msg)
-        }
+      this.dialogFormVisibleAdd = false;
+      const res = await this.$http.post(`users`, this.form);
+      console.log(res);
+      const {
+        meta: { status, msg },
+        data
+      } = res.data;
+      if (status === 201) {
+        // 1、提示添加成功
+        this.$message.success(msg);
+        // 2、关闭对话框，写在外面也可以
+        // 3、更新视图
+        this.getUserList();
+        // 4、清空文本框,赋值空对象和遍历都可以
+        // [1]
+        this.form = {};
+        // [2]
+        // for (const key in this.form) {
+        //     if (this.form.hasOwnProperty(key)) {
+        //         this.form[key] = ""
+        //     }
+        // }
+        // [3]
+        //  for (const key in this.form) {
+        //     this.form[key] = ""
+        // }
+      } else {
+        this.$message.warning(msg);
+      }
     },
     //   点击添加用户按钮显示添加用户对话框
     showAddUserDia() {
       // 添加之前先清空表单中的数据
-      this.form = {}
-      this.dialogFormVisibleAdd = true
+      this.form = {};
+      this.dialogFormVisibleAdd = true;
     },
     //   搜索用户功能
     searchUser() {
@@ -308,7 +349,7 @@ export default {
   margin-top: 30px;
 }
 .dia-form {
-    margin-right: 50px;
+  margin-right: 50px;
 }
 .el-icon-circle-close-outline {
   color: red;
