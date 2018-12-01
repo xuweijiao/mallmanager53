@@ -43,7 +43,13 @@
       <!-- 操作按钮 -->
       <el-table-column prop="address" label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" plain type="primary" icon="el-icon-edit" circle></el-button>
+          <el-button 
+          size="mini" 
+          plain type="primary" 
+          icon="el-icon-edit" 
+          circle
+          @click="showEditUserDia()"
+          ></el-button>
           <el-button 
           size="mini" 
           plain 
@@ -93,6 +99,24 @@
         <el-button type="primary" @click="addUser()">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 编辑用户对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
+      <el-form :model="form">
+        <el-form-item class="dia-form" label="用户名" label-width="100px">
+          <el-input v-model="form.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item class="dia-form" label="邮箱" label-width="100px">
+          <el-input v-model="form.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item class="dia-form" label="电话" label-width="100px">
+          <el-input v-model="form.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisibleEdit = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -110,6 +134,7 @@ export default {
       userlist: [],
       //   添加对话框的属性
       dialogFormVisibleAdd: false,
+      dialogFormVisibleEdit: false,
       // 添加用户的表单数据
       form: {
         username: '',
@@ -122,7 +147,12 @@ export default {
   created() {
     this.getUserList();
   },
+  
   methods: {
+    // 编辑用户---消息盒子
+    showEditUserDia() {
+      this.dialogFormVisibleEdit = true
+    },
     // 删除用户--弹出框（打开消息盒子）
     showDeleUserMsgBox(userId) {
        this.$confirm('删除用户, 是否继续?', '提示', {
