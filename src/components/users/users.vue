@@ -22,7 +22,7 @@
       </el-col>
     </el-row>
     <!-- 3.表格 -->
-    <el-table :data="userlist" style="width: 100%">
+    <el-table height="300px" :data="userlist" style="width: 100%">
       <el-table-column type="index" label="#"></el-table-column>
       <el-table-column prop="username" label="姓名"></el-table-column>
       <el-table-column prop="email" label="邮箱"></el-table-column>
