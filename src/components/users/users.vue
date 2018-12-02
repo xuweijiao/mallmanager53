@@ -148,8 +148,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button @click="dialogFormVisibleRol = false">取 消</el-button>
+        <el-button type="primary" @click="setRol()">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -178,9 +178,13 @@ export default {
         email: "",
         mobile: ""
       },
+      // 分配角色
       currRoleId: 0,
       currUserName: '',
-      roles: []
+      // 保存所有的角色数据
+      roles: [],
+      // 当前用户id
+      currUserId: -1
     };
   },
   created() {
@@ -188,13 +192,22 @@ export default {
   },
 
   methods: {
+    // 分配角色-点击确定-发送请求-设置角色
+    async setRol() {
+      const res = await this.$http.put(`users/${this.currUserId}/role`,{rid :this.currRoleId})
+      console.log(res)
+      // 关闭对话框---可以进行if判断status===200时，关闭对话框
+      this.dialogFormVisibleRol = false
+    },
     // 分配用户角色--打开对话框
     async showSetUserRoleDia(user) {
       // 获取当前用户的用户名
       this.currUserName = user.username
+      // 给currUserId赋值
+      this.currUserId = user.id
       // 获取所有的角色
       const res1 = await this.$http.get(`roles`)
-      console.log(res1)
+      // console.log(res1)
       this.roles = res1.data.data
       //获取当前用户的角色id---rid
       const res = await this.$http.get(`users/${user.id}`)
@@ -211,8 +224,8 @@ export default {
     },
     // 编辑用户--点击取消--不改变原本的数据
     editUserCancel() {
-      // 点击取消显示原本的数据
-    
+      // 点击取消显示原本的数据--更新视图即可
+      this.getUserList()
       // 关闭对话框
       this.dialogFormVisibleEdit = false;
     },
